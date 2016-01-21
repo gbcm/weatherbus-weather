@@ -20,11 +20,12 @@ import java.util.Map;
  * Created by pivotal on 1/4/16.
  */
 @Controller
+@RequestMapping("api")
 public class WeatherController {
     @Autowired
     WeatherService weatherService;
 
-    @RequestMapping("/")
+    @RequestMapping("/temp")
     public @ResponseBody String getCurrentTemp(@RequestParam double lat, @RequestParam double lng) throws Exception {
         if (!isValidLatAndLng(lat, lng)) {
             throw new IllegalArgumentException("Bad query params to '/' ");
@@ -32,7 +33,6 @@ public class WeatherController {
         return new TemperaturePresenter(lat, lng,
                 weatherService.getCurrentTemp(new Coordinate(lat, lng))).toJson();
     }
-
 
     @RequestMapping("/forecast")
     public @ResponseBody String getFutureTemp(@RequestParam double lat, @RequestParam double lng) throws Exception {
