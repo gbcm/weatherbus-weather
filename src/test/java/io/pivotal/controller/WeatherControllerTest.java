@@ -50,7 +50,7 @@ public class WeatherControllerTest {
     @Test
     public void testGetCurrentTemp() throws Exception {
         when(weatherService.getCurrentTemp(new Coordinate(47.6098, -122.3332))).thenReturn(36.2);
-        mockMvc.perform(get("/?lat=47.6098&lng=-122.3332")).andExpect(
+        mockMvc.perform(get("/api/temp?lat=47.6098&lng=-122.3332")).andExpect(
                 json().isEqualTo(TestUtilities.jsonFileToString("src/test/resources/output/CurrentTemp.json")));
     }
 
@@ -62,7 +62,7 @@ public class WeatherControllerTest {
         }};
 
         when(weatherService.getFutureTemp(new Coordinate(47.6098, -122.3332))).thenReturn(values);
-        mockMvc.perform(get("/forecast?lat=47.6098&lng=-122.3332")).andExpect(
+        mockMvc.perform(get("/api/forecast?lat=47.6098&lng=-122.3332")).andExpect(
                 json().isEqualTo(TestUtilities.jsonFileToString("src/test/resources/output/FutureTemp.json")));
     }
 
@@ -70,13 +70,13 @@ public class WeatherControllerTest {
     public void testGetCurrentTempNetworkFailure() throws Exception {
         when(weatherService.getCurrentTemp(new Coordinate(47.6097, -122.3331))).
                 thenThrow(RetrofitError.networkError("Whateva", new IOException()));
-        mockMvc.perform(get("/?lat=47.6097&lng=-122.3331"));
+        mockMvc.perform(get("/api/temp?lat=47.6097&lng=-122.3331"));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testGetFutureTempWithOutOfRangeParams() throws Throwable {
         try {
-            mockMvc.perform(get("/forecast?lat=70.6098&lng=-1220.3332"));
+            mockMvc.perform(get("/api/forecast?lat=70.6098&lng=-1220.3332"));
         } catch (NestedServletException e) {
             throw e.getCause();
         } finally {
@@ -87,7 +87,7 @@ public class WeatherControllerTest {
     @Test(expected = IllegalArgumentException.class)
     public void testGetTempWithOutOfRangeParams() throws Throwable {
         try {
-            mockMvc.perform(get("/?lat=-90.6098&lng=180.3332"));
+            mockMvc.perform(get("/api/temp?lat=-90.6098&lng=180.3332"));
         } catch (NestedServletException e) {
             throw e.getCause();
         } finally {
@@ -98,7 +98,7 @@ public class WeatherControllerTest {
     @Test(expected = MissingServletRequestParameterException.class)
     public void testGetTempWithOutParams() throws Throwable {
         try {
-            mockMvc.perform(get("/"));
+            mockMvc.perform(get("/api/temp"));
         } finally {
             verifyNoMoreInteractions(weatherService);
         }
