@@ -1,6 +1,5 @@
 package io.pivotal.controller;
 
-import io.pivotal.errorHandling.ErrorController;
 import io.pivotal.model.Coordinate;
 import io.pivotal.service.WeatherService;
 import io.pivotal.view.ForecastPresenter;

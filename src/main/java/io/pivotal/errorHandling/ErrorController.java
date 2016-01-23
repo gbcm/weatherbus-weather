@@ -63,4 +63,13 @@ public class ErrorController implements org.springframework.boot.autoconfigure.w
     String badJson() {
         return new ErrorPresenter(ErrorMessages.BAD_JSON.getErrorMessage()).toJson();
     }
+
+    @ExceptionHandler({TooManyRequestsException.class})
+    @ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
+    @RequestMapping(ErrorPathConstants.ERROR_TOO_MANY_REQUESTS)
+    public
+    @ResponseBody
+    String tooManyRequests() {
+        return new ErrorPresenter(ErrorMessages.TOO_MANY_REQUESTS.getErrorMessage()).toJson();
+    }
 }

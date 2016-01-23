@@ -1,6 +1,9 @@
 package io.pivotal.integration;
 
-import io.pivotal.service.*;
+import io.pivotal.service.IWundergroundService;
+import io.pivotal.service.WeatherConditionsResponse;
+import io.pivotal.service.WeatherConditionsResponseBuilder;
+import io.pivotal.service.WeatherForecastResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;

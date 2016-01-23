@@ -1,6 +1,7 @@
 package io.pivotal.controller;
 
 import io.pivotal.TestUtilities;
+import io.pivotal.errorHandling.TooManyRequestsException;
 import io.pivotal.model.Coordinate;
 import io.pivotal.service.WeatherService;
 import org.junit.Before;
@@ -22,6 +23,7 @@ import java.util.Date;
 import java.util.HashMap;
 
 import static net.javacrumbs.jsonunit.spring.JsonUnitResultMatchers.json;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -101,6 +103,16 @@ public class WeatherControllerTest {
             mockMvc.perform(get("/api/temp"));
         } finally {
             verifyNoMoreInteractions(weatherService);
+        }
+    }
+
+    @Test(expected = TooManyRequestsException.class)
+    public void testTooManyRequests() throws Throwable {
+        when(weatherService.getCurrentTemp(any())).thenThrow(TooManyRequestsException.class);
+        try {
+            mockMvc.perform(get("/api/temp?lat=47.6097&lng=-122.3331"));
+        } catch (NestedServletException e) {
+            throw e.getCause();
         }
     }
 }

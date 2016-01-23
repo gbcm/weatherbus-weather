@@ -70,4 +70,12 @@ public class ErrorControllerTest {
                 .andExpect(json().isEqualTo(TestUtilities.jsonFileToString(
                         "src/test/resources/output/BadJsonError.json")));
     }
+
+    @Test
+    public void testTooManyRequestsError() throws Exception {
+        mockMvc.perform(get(ErrorPathConstants.ERROR_TOO_MANY_REQUESTS))
+                .andExpect(status().isTooManyRequests())
+                .andExpect(json().isEqualTo(TestUtilities.jsonFileToString(
+                        "src/test/resources/output/TooManyRequestsError.json")));
+    }
 }
