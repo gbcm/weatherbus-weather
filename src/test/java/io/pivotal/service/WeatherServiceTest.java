@@ -101,7 +101,7 @@ public class WeatherServiceTest {
             subject.getCurrentTemp(coordinate);
         }
 
-        DateTimeUtils.setCurrentMillisOffset(Constants.REQUEST_PERIOD_MILLISECONDS);
+        DateTimeUtils.setCurrentMillisOffset(Constants.REQUEST_PERIOD_MILLISECONDS + 1);
 
         subject.getCurrentTemp(coordinate);
 
