@@ -1,0 +1,14 @@
+---
+platform: linux
+image: "docker:///java#8"
+inputs:
+  - name: weather
+outputs:
+  - name: build
+    path: weather/artifacts
+run:
+  path: "weather/gradlew"
+  args: ["build", "-pweather"]
+params:
+  "TERM": "xterm"
+
