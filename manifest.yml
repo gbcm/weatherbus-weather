@@ -1,0 +1,7 @@
+---
+applications:
+- name: weatherbus-weather
+  memory: 512M
+  host: weatherbus-weather-dev
+  path: ./build/libs/weatherbus-weather-0.0.1-SNAPSHOT.jar
+  buildpack: java_buildpack
