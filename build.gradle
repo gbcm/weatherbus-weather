@@ -52,3 +52,7 @@ eclipse {
 task wrapper(type: Wrapper) {
 	gradleVersion = '2.9'
 }
+
+task ('buildAndFind', dependsOn: build, type: Exec) {
+    commandLine 'find', '.', '-name', '*.jar'
+}

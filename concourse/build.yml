@@ -8,7 +8,7 @@ outputs:
     path: weather/artifacts
 run:
   path: "weather/gradlew"
-  args: ["build", "-pweather"]
+  args: ["buildAndFind", "-pweather"]
 params:
   "TERM": "xterm"
 
