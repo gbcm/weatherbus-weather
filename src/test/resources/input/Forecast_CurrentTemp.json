@@ -1,0 +1,82 @@
+{
+  "latitude": 45.23,
+  "longitude": -160.56,
+  "timezone": "America/Los_Angeles",
+  "offset": -8,
+  "currently": {
+    "time": 1454366098,
+    "summary": "Clear",
+    "icon": "clear-day",
+    "nearestStormDistance": 97,
+    "nearestStormBearing": 352,
+    "precipIntensity": 0,
+    "precipProbability": 0,
+    "temperature": 54.01,
+    "apparentTemperature": 54.01,
+    "dewPoint": 32.74,
+    "humidity": 0.44,
+    "windSpeed": 8.33,
+    "windBearing": 343,
+    "visibility": 10,
+    "cloudCover": 0.23,
+    "pressure": 1022.97,
+    "ozone": 357.8
+  },
+  "hourly": {
+    "summary": "Light rain tomorrow morning.",
+    "icon": "rain",
+    "data": [
+      {
+        "time": 1454364000,
+        "summary": "Clear",
+        "icon": "clear-day",
+        "precipIntensity": 0,
+        "precipProbability": 0,
+        "temperature": 53.61,
+        "apparentTemperature": 53.61,
+        "dewPoint": 30.98,
+        "humidity": 0.42,
+        "windSpeed": 7.56,
+        "windBearing": 356,
+        "visibility": 10,
+        "cloudCover": 0.24,
+        "pressure": 1023.13,
+        "ozone": 354.28
+      },
+      {
+        "time": 1454367600,
+        "summary": "Clear",
+        "icon": "clear-day",
+        "precipIntensity": 0,
+        "precipProbability": 0,
+        "temperature": 54.3,
+        "apparentTemperature": 54.3,
+        "dewPoint": 33.96,
+        "humidity": 0.46,
+        "windSpeed": 9.12,
+        "windBearing": 335,
+        "visibility": 10,
+        "cloudCover": 0.22,
+        "pressure": 1022.86,
+        "ozone": 360.32
+      },
+      {
+        "time": 1454371200,
+        "summary": "Partly Cloudy",
+        "icon": "partly-cloudy-day",
+        "precipIntensity": 0,
+        "precipProbability": 0,
+        "temperature": 53.72,
+        "apparentTemperature": 53.72,
+        "dewPoint": 35.36,
+        "humidity": 0.5,
+        "windSpeed": 10.39,
+        "windBearing": 325,
+        "visibility": 10,
+        "cloudCover": 0.36,
+        "pressure": 1022.82,
+        "ozone": 364.54
+      }
+    ]
+  }
+}

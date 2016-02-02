@@ -1,6 +1,7 @@
 package io.pivotal.config;
 
 import io.pivotal.Constants;
+import io.pivotal.service.IForecastService;
 import io.pivotal.service.IWundergroundService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,5 +19,13 @@ public class WeatherConfig {
         builder.setClient(new OkClient());
         RestAdapter adapter = builder.build();
         return adapter.create(IWundergroundService.class);
+    }
+
+    @Bean
+    public IForecastService getForecastService() {
+        RestAdapter.Builder builder = new RestAdapter.Builder().setEndpoint(Constants.FORECAST_ENDPOINT);
+        builder.setClient(new OkClient());
+        RestAdapter adapter = builder.build();
+        return adapter.create(IForecastService.class);
     }
 }

@@ -1,9 +1,6 @@
 package io.pivotal.integration;
 
-import io.pivotal.service.IWundergroundService;
-import io.pivotal.service.WeatherConditionsResponse;
-import io.pivotal.service.WeatherConditionsResponseBuilder;
-import io.pivotal.service.WeatherForecastResponse;
+import io.pivotal.service.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -22,6 +19,15 @@ public class TestConfig {
 
             @Override
             public WeatherForecastResponse getForecastResponse(@Path("latitude") String latitude, @Path("longitude") String longitude) {
+                return null;
+            }
+        };
+    }
+    @Bean
+    public IForecastService getForecastService() {
+        return new IForecastService() {
+            @Override
+            public ForecastResponse getForecast(@Path("latitude") String latitude, @Path("longitude") String longitude) {
                 return null;
             }
         };

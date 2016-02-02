@@ -3,9 +3,9 @@ package io.pivotal.service;
 import com.google.gson.Gson;
 import io.pivotal.Constants;
 import io.pivotal.TestUtilities;
-import io.pivotal.errorHandling.TooManyRequestsException;
 import io.pivotal.model.Coordinate;
 import org.joda.time.DateTimeUtils;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -19,92 +19,135 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mockingDetails;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class WeatherServiceTest {
     @Mock
-    IWundergroundService mockService;
+    IWundergroundService iWundergroundService;
+
+    @Mock
+    IForecastService iForecastService;
+
     @InjectMocks
     WeatherService subject;
 
+    ForecastResponse forecastResponse;
+    WeatherConditionsResponse wundergroundConditionsResponse;
+    WeatherForecastResponse wundergroundForecastResponse;
+    Coordinate coordinate = new Coordinate(45.23, -160.56);
+
     Gson gson = new Gson();
 
-    @Test
-    public void testGetCurrentTemp() throws Exception {
-        Double latitude = 45.23;
-        Double longitude = -160.56;
-
-        WeatherConditionsResponse response = gson.fromJson(
-                TestUtilities.fixtureReader("CurrentTemp"),
+    @Before
+    public void setup() throws Exception {
+        forecastResponse = gson.fromJson(
+                TestUtilities.fixtureReader("Forecast_CurrentTemp"),
+                ForecastResponse.class);
+        wundergroundConditionsResponse = gson.fromJson(
+                TestUtilities.fixtureReader("Wunderground_CurrentTemp"),
                 WeatherConditionsResponse.class);
+        wundergroundForecastResponse = gson.fromJson(
+                TestUtilities.fixtureReader("Wunderground_FutureTemp"),
+                WeatherForecastResponse.class);
 
-        when(mockService.getConditionsResponse(
-                latitude.toString(),
-                longitude.toString())).thenReturn(response);
+        when(iWundergroundService.getConditionsResponse(
+                Double.toString(coordinate.getLatitude()),
+                Double.toString(coordinate.getLongitude()))).thenReturn(wundergroundConditionsResponse);
+        when(iWundergroundService.getForecastResponse(
+                Double.toString(coordinate.getLatitude()),
+                Double.toString(coordinate.getLongitude()))).thenReturn(wundergroundForecastResponse);
+        when(iForecastService.getForecast(
+                Double.toString(coordinate.getLatitude()),
+                Double.toString(coordinate.getLongitude()))).thenReturn(forecastResponse);
 
-        assertEquals(51.4, subject.getCurrentTemp(new Coordinate(latitude, longitude)), 0);
+        DateTimeUtils.setCurrentMillisSystem();
+    }
+
+    @Test
+    public void testWundergroundGetCurrentTemp() throws Exception {
+        assertEquals(51.4, subject.getCurrentTemp(coordinate), 0);
+    }
+
+    @Test
+    public void testForecastGetCurrentTemp() throws Exception {
+        assertEquals(54.01, subject.getForecastCurrentTemp(coordinate), 0);
     }
 
     @Test
     public void testGetFutureTemp() throws Exception {
-        Double latitude = 45.23;
-        Double longitude = -160.56;
-
-        WeatherForecastResponse response = gson.fromJson(
-                TestUtilities.fixtureReader("FutureTemp"),
-                WeatherForecastResponse.class);
-
-        when(mockService.getForecastResponse(
-                latitude.toString(),
-                longitude.toString())).thenReturn(response);
         Map<Date, Double> expectedTemperatures = new HashMap<Date, Double>() {{
             put(new Date(1452211200L), 43.0);
             put(new Date(1452214800L), 42.0);
             put(new Date(1452218400L), 41.0);
         }};
 
-        assertEquals(expectedTemperatures, subject.getFutureTemp(new Coordinate(latitude, longitude)));
+        assertEquals(expectedTemperatures, subject.getFutureTemp(coordinate));
     }
 
-    @Test(expected = TooManyRequestsException.class)
+    @Test
+    public void testGetForecastFutureTemp() throws Exception {
+        Map<Date, Double> expectedTemperatures = new HashMap<Date, Double>() {{
+            put(new Date(1454364000L), 53.61);
+            put(new Date(1454367600L), 54.3);
+            put(new Date(1454371200L), 53.72);
+        }};
+
+        assertEquals(expectedTemperatures, subject.getForecastFutureTemp(coordinate));
+    }
+
+    @Test
+    public void testTooManyWundergroundCalls() throws Exception {
+        for (int i = 0; i < (Constants.WUNDERGROUND_REQUEST_LIMIT); i++) {
+            subject.getCurrentTemp(coordinate);
+        }
+        verify(iWundergroundService,times(10)).getConditionsResponse(any(),any());
+        reset(iWundergroundService);
+        subject.getCurrentTemp(coordinate);
+        subject.getFutureTemp(coordinate);
+        verify(iForecastService,times(2)).getForecast(any(),any());
+        verify(iWundergroundService,never()).getConditionsResponse(any(),any());
+    }
+
+    @Test(expected = UnknownServiceException.class)
     public void testTooManyApiCalls() throws Throwable {
-        WeatherConditionsResponse response = gson.fromJson(
-                TestUtilities.fixtureReader("CurrentTemp"),
-                WeatherConditionsResponse.class);
-
-        when(mockService.getConditionsResponse(any(),any())).thenReturn(response);
-
         try {
-            Coordinate coordinate = new Coordinate(45.23, -160.56);
-            for (int i = 0; i < (Constants.REQUEST_LIMIT + 1); i++) {
+            for (int i = 0; i < (Constants.WUNDERGROUND_REQUEST_LIMIT + Constants.FORECAST_REQUEST_LIMIT + 1); i++) {
                 subject.getCurrentTemp(coordinate);
             }
-        } catch (UnknownServiceException e) {
-            throw e.getCause();
         } finally {
-            assertEquals(mockingDetails(mockService).getInvocations().size(), Constants.REQUEST_LIMIT);
+            assertEquals(mockingDetails(iWundergroundService).getInvocations().size(), Constants.WUNDERGROUND_REQUEST_LIMIT);
+            assertEquals(mockingDetails(iForecastService).getInvocations().size(), Constants.FORECAST_REQUEST_LIMIT);
         }
     }
 
     @Test
-    public void testApiCallCounterProperlyDecrements() throws Exception {
-        WeatherConditionsResponse response = gson.fromJson(
-                TestUtilities.fixtureReader("CurrentTemp"),
-                WeatherConditionsResponse.class);
-
-        when(mockService.getConditionsResponse(any(),any())).thenReturn(response);
-
-        Coordinate coordinate = new Coordinate(45.23, -160.56);
-        for (int i = 0; i < Constants.REQUEST_LIMIT; i++) {
+    public void testWundergroundApiCallCounterProperlyDecrements() throws Exception {
+        for (int i = 0; i < Constants.WUNDERGROUND_REQUEST_LIMIT; i++) {
             subject.getCurrentTemp(coordinate);
         }
 
-        DateTimeUtils.setCurrentMillisOffset(Constants.REQUEST_PERIOD_MILLISECONDS + 1);
+        DateTimeUtils.setCurrentMillisOffset(Constants.WUNDERGROUND_REQUEST_PERIOD_MILLISECONDS + 1);
 
-        subject.getCurrentTemp(coordinate);
+        subject.getFutureTemp(coordinate);
 
-        assertEquals(mockingDetails(mockService).getInvocations().size(), Constants.REQUEST_LIMIT + 1);
+        assertEquals(Constants.WUNDERGROUND_REQUEST_LIMIT + 1, mockingDetails(iWundergroundService).getInvocations().size());
+    }
+
+    @Test
+    public void testForecastApiCallCounterProperlyDecrements() throws Exception {
+        for (int i = 0; i < Constants.WUNDERGROUND_REQUEST_LIMIT + Constants.FORECAST_REQUEST_LIMIT; i++) {
+            subject.getCurrentTemp(coordinate);
+        }
+
+        DateTimeUtils.setCurrentMillisOffset(Constants.FORECAST_REQUEST_PERIOD_MILLISECONDS + 1);
+
+        for (int i = 0; i < Constants.WUNDERGROUND_REQUEST_LIMIT; i++) {
+            subject.getCurrentTemp(coordinate);
+        }
+
+        subject.getFutureTemp(coordinate);
+
+        assertEquals(Constants.FORECAST_REQUEST_LIMIT + 1, mockingDetails(iForecastService).getInvocations().size());
     }
 }
