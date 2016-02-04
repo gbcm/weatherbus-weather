@@ -24,8 +24,9 @@ targetCompatibility = 1.8
 
 repositories {
 	mavenCentral()
+    maven { url "https://repo.spring.io/snapshot" }
+    maven { url "https://repo.spring.io/milestone" }
 }
-
 
 dependencies {
 	compile('com.squareup.retrofit:retrofit:1.9.0')
@@ -33,6 +34,7 @@ dependencies {
 	compile('com.google.code.gson:gson:2.3.1')
 	compile('com.cedarsoftware:json-io:4.3.0')
 	compile('org.projectlombok:lombok:1.16.6')
+    compile('org.springframework.cloud:spring-cloud-starter-eureka')
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('joda-time:joda-time:2.3')
 
@@ -41,6 +43,11 @@ dependencies {
 	testCompile('net.javacrumbs.json-unit:json-unit-spring:1.8.0')
 }
 
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-starter-parent:Brixton.M4"
+    }
+}
 
 eclipse {
 	classpath {
