@@ -15,9 +15,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by pivotal on 1/4/16.
- */
 @Controller
 @RequestMapping("api")
 public class WeatherController {
