@@ -12,7 +12,6 @@ import retrofit.RestAdapter;
 import retrofit.client.OkClient;
 
 @Configuration
-@Profile({ "default", "cloud" })
 public class WeatherConfig {
 
     @Value("${wunderground.endpoint}")

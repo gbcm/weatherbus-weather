@@ -27,3 +27,15 @@ spring:
     profiles: default
 server:
     port: 9090
+
+---
+
+spring:
+  profiles: test
+
+wunderground:
+  endpoint: http://example.com/
+  api_key: WUNDERGROUND_API_KEY
+forecast:
+  endpoint: http://example.com/
+  api_key: FORECAST_API_KEY

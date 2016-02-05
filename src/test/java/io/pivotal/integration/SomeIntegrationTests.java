@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles("test")
 @WebAppConfiguration
-@SpringApplicationConfiguration(WeatherbusWeatherApplication.class)
+@SpringApplicationConfiguration({WeatherbusWeatherApplication.class, TestConfig.class})
 public class SomeIntegrationTests {
 
     @Autowired
