@@ -1,13 +1,12 @@
 package io.pivotal.view;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-/**
- * Created by pivotal on 1/6/16.
- */
 @Data
 @ToString
+@EqualsAndHashCode(callSuper=false)
 public class TemperaturePresenter extends JsonPresenter{
     private final Double temp;
     private final Double latitude;

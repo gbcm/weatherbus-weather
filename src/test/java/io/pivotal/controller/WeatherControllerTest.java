@@ -106,9 +106,10 @@ public class WeatherControllerTest {
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Test(expected = TooManyRequestsException.class)
     public void testTooManyRequests() throws Throwable {
-        when(weatherService.getCurrentTemp(any())).thenThrow(TooManyRequestsException.class);
+        when(weatherService.getCurrentTemp(any(Coordinate.class))).thenThrow(TooManyRequestsException.class);
         try {
             mockMvc.perform(get("/api/temp?lat=47.6097&lng=-122.3331"));
         } catch (NestedServletException e) {
