@@ -21,7 +21,7 @@ public class WeatherController {
     @Autowired
     WeatherService weatherService;
 
-    @RequestMapping("/temp")
+    @RequestMapping(value = "/temp", produces = {"application/json"})
     public @ResponseBody String getCurrentTemp(@RequestParam double lat, @RequestParam double lng) throws Exception {
         if (!isValidLatAndLng(lat, lng)) {
             throw new IllegalArgumentException("Bad query params to '/' ");
@@ -30,7 +30,7 @@ public class WeatherController {
                 weatherService.getCurrentTemp(new Coordinate(lat, lng))).toJson();
     }
 
-    @RequestMapping("/forecast")
+    @RequestMapping(value = "/forecast", produces = {"application/json"})
     public @ResponseBody String getFutureTemp(@RequestParam double lat, @RequestParam double lng) throws Exception {
         if (!isValidLatAndLng(lat,lng)){
             throw new IllegalArgumentException("Bad query params to '/forecast' ");
