@@ -9,6 +9,7 @@ public class WeatherConditionsResponseBuilder {
 
         WeatherConditionsResponse.CurrentObservation observation = new WeatherConditionsResponse.CurrentObservation();
         observation.setTempF(36.2);
+        observation.setIcon("snow");
 
         WeatherConditionsResponse response = new WeatherConditionsResponse();
         response.setCurrentObservation(observation);

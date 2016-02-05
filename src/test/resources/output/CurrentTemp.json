@@ -1,5 +1,6 @@
 {
   "latitude": 47.6098,
   "longitude": -122.3332,
-  "temp": 36.2
+  "temp": 36.2,
+  "climacon": "Cloud-Snow.svg"
 }

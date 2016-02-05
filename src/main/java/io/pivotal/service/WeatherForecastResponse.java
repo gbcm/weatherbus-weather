@@ -13,38 +13,28 @@ import java.util.Map;
  */
 @Data
 public class WeatherForecastResponse {
-    public Map<Date, Double> getTemps() {
-        Map<Date, Double> temps = new HashMap<>();
-
-        for (HourlyForecast hourlyForecast : hourlyForecasts) {
-            temps.put(
-                    new Date(Long.parseLong(hourlyForecast.getFctTime().getEpoch())),
-                    Double.parseDouble(hourlyForecast.getTemp().getEnglish())
-            );
-        }
-
-        return temps;
-    }
-
     @SerializedName("hourly_forecast")
     private List<HourlyForecast> hourlyForecasts;
 
     @Data
-    private class HourlyForecast {
+    public static class HourlyForecast {
         @SerializedName("FCTTIME")
         FctTime fctTime;
 
         @SerializedName("temp")
         Temp temp;
 
+        @SerializedName("icon")
+        String wundergroundIcon;
+
         @Data
-        private class FctTime {
+        public static class FctTime {
             @SerializedName("epoch")
             String epoch;
         }
 
         @Data
-        private class Temp {
+        public static class Temp {
             @SerializedName("english")
             String english;
         }

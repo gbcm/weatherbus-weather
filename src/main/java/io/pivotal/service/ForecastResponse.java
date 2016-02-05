@@ -27,18 +27,20 @@ public class ForecastResponse {
     private Hourly hourly;
 
     @Data
-    private class Currently {
+    public static class Currently {
         private double temperature;
+        private String icon;
     }
 
     @Data
-    private class Hourly {
+    public static class Hourly {
         private List<HourlyData> data;
 
         @Data
-        private class HourlyData {
+        public static class HourlyData {
             private long time;
             private double temperature;
+            private String icon;
         }
     }
 }

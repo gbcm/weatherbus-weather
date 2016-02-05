@@ -46,7 +46,7 @@
         "metric": "3"
       },
       "condition": "Overcast",
-      "icon": "cloudy",
+      "icon": "sunny",
       "icon_url": "http://icons.wxug.com/i/c/k/cloudy.gif",
       "fctcode": "4",
       "sky": "94",

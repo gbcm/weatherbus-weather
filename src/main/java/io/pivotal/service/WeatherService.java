@@ -2,6 +2,8 @@ package io.pivotal.service;
 
 import io.pivotal.Constants;
 import io.pivotal.model.Coordinate;
+import io.pivotal.model.Forecast;
+import io.pivotal.model.WeatherIcon;
 import org.joda.time.DateTimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -9,10 +11,8 @@ import org.springframework.stereotype.Component;
 import java.net.UnknownServiceException;
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.stream.Collectors;
 
-/**
- * Created by pivotal on 1/6/16.
- */
 @Component
 public class WeatherService {
 
@@ -69,15 +69,20 @@ public class WeatherService {
         return ServiceEndpoint.NONE;
     }
 
-    public double getCurrentTemp(Coordinate coordinate) throws Exception {
+    public Forecast getCurrentTemp(Coordinate coordinate) throws Exception {
         ServiceEndpoint endpoint = pickServiceEndpoint();
 
         switch (endpoint) {
             case WUNDERGROUND:
-                return iWundergroundService
+                WeatherConditionsResponse wcr = iWundergroundService
                         .getConditionsResponse(Double.toString(coordinate.getLatitude()),
-                                Double.toString(coordinate.getLongitude()))
-                        .getTempF();
+                                Double.toString(coordinate.getLongitude()));
+                return new Forecast(
+                        new Date().getTime()
+                        ,
+                        wcr.getTempF(),
+                        WeatherIcon.getIconFromWunderground(
+                                wcr.getIcon()).getClimaconFileName());
             case FORECAST:
                 return getForecastCurrentTemp(coordinate);
             default:
@@ -85,20 +90,32 @@ public class WeatherService {
         }
     }
 
-    public double getForecastCurrentTemp(Coordinate coordinate) throws Exception {
-        return iForecastService.getForecast(Double.toString(coordinate.getLatitude()),
-                Double.toString(coordinate.getLongitude())).getCurrentTemperature();
+    public Forecast getForecastCurrentTemp(Coordinate coordinate) throws Exception {
+        ForecastResponse fr = iForecastService.getForecast(Double.toString(coordinate.getLatitude()),
+                Double.toString(coordinate.getLongitude()));
+        return new Forecast(
+                new Date().getTime(),
+                fr.getCurrentTemperature(),
+                WeatherIcon.getIconFromForecast(fr.getCurrently()
+                        .getIcon()).getClimaconFileName());
     }
 
-    public Map<Date, Double> getFutureTemp(Coordinate coordinate) throws Exception {
+    public List<Forecast> getFutureTemp(Coordinate coordinate) throws Exception {
         ServiceEndpoint endpoint = pickServiceEndpoint();
-
         switch (endpoint) {
             case WUNDERGROUND:
-                return iWundergroundService
-                        .getForecastResponse(Double.toString(coordinate.getLatitude()),
-                                Double.toString(coordinate.getLongitude()))
-                        .getTemps();
+                List<Forecast> forecasts = new ArrayList<>();
+                WeatherForecastResponse wfr = iWundergroundService.getForecastResponse(
+                        Double.toString(coordinate.getLatitude()),
+                        Double.toString(coordinate.getLongitude()));
+                forecasts.addAll(wfr.getHourlyForecasts().stream().map(
+                        hf -> new Forecast(
+                                Long.parseLong(hf.getFctTime().getEpoch()),
+                                Double.parseDouble(hf.getTemp().getEnglish()),
+                                WeatherIcon.getIconFromWunderground(
+                                        hf.getWundergroundIcon()).getClimaconFileName()))
+                        .collect(Collectors.toList()));
+                return forecasts;
             case FORECAST:
                 return getForecastFutureTemp(coordinate);
             default:
@@ -106,8 +123,16 @@ public class WeatherService {
         }
     }
 
-    public Map<Date, Double> getForecastFutureTemp(Coordinate coordinate) {
-        return iForecastService.getForecast(Double.toString(coordinate.getLatitude()),
-                Double.toString(coordinate.getLongitude())).getHourlyTemperatures();
+    public List<Forecast> getForecastFutureTemp(Coordinate coordinate) {
+        List<Forecast> forecasts = new ArrayList<>();
+        ForecastResponse fr = iForecastService.getForecast(Double.toString(coordinate.getLatitude()),
+                Double.toString(coordinate.getLongitude()));
+        forecasts.addAll(fr.getHourly().getData().stream().map(
+                hf -> new Forecast(
+                        hf.getTime(),
+                        hf.getTemperature(),
+                        WeatherIcon.getIconFromForecast(hf.getIcon()).getClimaconFileName()))
+                .collect(Collectors.toList()));
+        return forecasts;
     }
 }

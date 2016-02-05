@@ -1,6 +1,7 @@
 package io.pivotal.controller;
 
 import io.pivotal.model.Coordinate;
+import io.pivotal.model.Forecast;
 import io.pivotal.service.WeatherService;
 import io.pivotal.view.ForecastPresenter;
 import io.pivotal.view.TemperaturePresenter;
@@ -26,8 +27,8 @@ public class WeatherController {
         if (!isValidLatAndLng(lat, lng)) {
             throw new IllegalArgumentException("Bad query params to '/' ");
         }
-        return new TemperaturePresenter(lat, lng,
-                weatherService.getCurrentTemp(new Coordinate(lat, lng))).toJson();
+        Forecast f = weatherService.getCurrentTemp(new Coordinate(lat, lng));
+        return new TemperaturePresenter(lat, lng, f.getTemp(), f.getClimacon()).toJson();
     }
 
     @RequestMapping("/forecast")
@@ -35,15 +36,7 @@ public class WeatherController {
         if (!isValidLatAndLng(lat,lng)){
             throw new IllegalArgumentException("Bad query params to '/forecast' ");
         }
-        return renderForecast(lat, lng, weatherService.getFutureTemp(new Coordinate(lat, lng)));
-    }
-
-    private String renderForecast(double lat, double lng, Map<Date, Double> forecast) {
-        List<ForecastPresenter.Forecast> forecasts = new ArrayList<>();
-        for (Map.Entry<Date, Double> kvp : forecast.entrySet()) {
-            forecasts.add(new ForecastPresenter.Forecast(kvp.getKey().getTime(), kvp.getValue()));
-        }
-        return new ForecastPresenter(lat, lng, forecasts).toJson();
+        return new ForecastPresenter(lat, lng, weatherService.getFutureTemp(new Coordinate(lat, lng))).toJson();
     }
 
     private boolean isValidLatAndLng(double lat, double lng) {

@@ -4,11 +4,13 @@
   "forecast": [
     {
       "time_epoch": 1452222000,
-      "temp": 14.4
+      "temp": 14.4,
+      "climacon": "Cloud-Fog.svg"
     },
     {
       "time_epoch": 1452225600,
-      "temp": 15.5
+      "temp": 15.5,
+      "climacon": "Cloud-Hail.svg"
     }
   ]
 }

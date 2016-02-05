@@ -59,6 +59,6 @@ public enum WeatherIcon {
     }
 
     public static WeatherIcon getIconFromForecast(String forecastIcon){
-        return wundergroundLookup.get(forecastIcon);
+        return forecastLookup.get(forecastIcon);
     }
 }

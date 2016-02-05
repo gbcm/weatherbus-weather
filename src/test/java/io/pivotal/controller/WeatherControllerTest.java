@@ -3,6 +3,7 @@ package io.pivotal.controller;
 import io.pivotal.TestUtilities;
 import io.pivotal.errorHandling.TooManyRequestsException;
 import io.pivotal.model.Coordinate;
+import io.pivotal.model.Forecast;
 import io.pivotal.service.WeatherService;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,8 +20,10 @@ import retrofit.RetrofitError;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import static net.javacrumbs.jsonunit.spring.JsonUnitResultMatchers.json;
 import static org.mockito.Matchers.any;
@@ -28,9 +31,6 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
-/**
- * Created by pivotal on 1/6/16.
- */
 @RunWith(MockitoJUnitRunner.class)
 public class WeatherControllerTest {
     @Mock
@@ -51,16 +51,18 @@ public class WeatherControllerTest {
 
     @Test
     public void testGetCurrentTemp() throws Exception {
-        when(weatherService.getCurrentTemp(new Coordinate(47.6098, -122.3332))).thenReturn(36.2);
+        when(weatherService.getCurrentTemp(new Coordinate(47.6098, -122.3332))).thenReturn(
+                new Forecast(0L, 36.2, "Cloud-Snow.svg")
+        );
         mockMvc.perform(get("/api/temp?lat=47.6098&lng=-122.3332")).andExpect(
                 json().isEqualTo(TestUtilities.jsonFileToString("src/test/resources/output/CurrentTemp.json")));
     }
 
     @Test
     public void testGetFutureTemp() throws Exception {
-        HashMap<Date, Double> values = new HashMap<Date, Double>() {{
-            put(new Date(1452222000L), 14.4);
-            put(new Date(1452225600L), 15.5);
+        List<Forecast> values = new ArrayList<Forecast>() {{
+            add(new Forecast(1452222000L, 14.4, "Cloud-Fog.svg"));
+            add(new Forecast(1452225600L, 15.5, "Cloud-Hail.svg"));
         }};
 
         when(weatherService.getFutureTemp(new Coordinate(47.6098, -122.3332))).thenReturn(values);
