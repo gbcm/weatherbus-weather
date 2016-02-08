@@ -64,6 +64,9 @@ public enum WeatherIcon {
     }
 
     public static String getRemoteUrl(HttpServletRequest remoteRequest, String climacon) {
-        return String.format("%s/assets/%s", remoteRequest.getRemoteHost(), climacon);
+        String requestUrl = remoteRequest.getRequestURL().toString();
+        String requestUri = remoteRequest.getRequestURI();
+        String baseUrl = requestUrl.substring(0, requestUrl.length() - requestUri.length());
+        return String.format("%s/assets/%s", baseUrl, climacon);
     }
 }

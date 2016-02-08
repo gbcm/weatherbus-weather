@@ -5,12 +5,12 @@
     {
       "time_epoch": 1452222000,
       "temp": 14.4,
-      "climacon": "localhost/assets/Cloud-Fog.svg"
+      "climacon": "http://localhost/assets/Cloud-Fog.svg"
     },
     {
       "time_epoch": 1452225600,
       "temp": 15.5,
-      "climacon": "localhost/assets/Cloud-Hail.svg"
+      "climacon": "http://localhost/assets/Cloud-Hail.svg"
     }
   ]
 }
