@@ -78,8 +78,7 @@ public class WeatherService {
                         .getConditionsResponse(Double.toString(coordinate.getLatitude()),
                                 Double.toString(coordinate.getLongitude()));
                 return new Forecast(
-                        new Date().getTime()
-                        ,
+                        new Date().getTime(),
                         wcr.getTempF(),
                         WeatherIcon.getIconFromWunderground(
                                 wcr.getIcon()).getClimaconFileName());

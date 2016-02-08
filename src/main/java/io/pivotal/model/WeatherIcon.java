@@ -2,6 +2,7 @@ package io.pivotal.model;
 
 import lombok.Getter;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -60,5 +61,9 @@ public enum WeatherIcon {
 
     public static WeatherIcon getIconFromForecast(String forecastIcon){
         return forecastLookup.get(forecastIcon);
+    }
+
+    public static String getRemoteUrl(HttpServletRequest remoteRequest, String climacon) {
+        return String.format("%s/assets/%s", remoteRequest.getRemoteHost(), climacon);
     }
 }

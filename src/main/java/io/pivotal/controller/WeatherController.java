@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -23,20 +24,21 @@ public class WeatherController {
     WeatherService weatherService;
 
     @RequestMapping(value = "/temp", produces = {"application/json"})
-    public @ResponseBody String getCurrentTemp(@RequestParam double lat, @RequestParam double lng) throws Exception {
+    public @ResponseBody String getCurrentTemp(HttpServletRequest request, @RequestParam double lat, @RequestParam double lng) throws Exception {
         if (!isValidLatAndLng(lat, lng)) {
             throw new IllegalArgumentException("Bad query params to '/' ");
         }
         Forecast f = weatherService.getCurrentTemp(new Coordinate(lat, lng));
-        return new TemperaturePresenter(lat, lng, f.getTemp(), f.getClimacon()).toJson();
+        return new TemperaturePresenter(request, lat, lng, f.getTemp(), f.getClimacon()).toJson();
     }
 
     @RequestMapping(value = "/forecast", produces = {"application/json"})
-    public @ResponseBody String getFutureTemp(@RequestParam double lat, @RequestParam double lng) throws Exception {
+    public @ResponseBody String getFutureTemp(HttpServletRequest request, @RequestParam double lat, @RequestParam double lng) throws Exception {
         if (!isValidLatAndLng(lat,lng)){
             throw new IllegalArgumentException("Bad query params to '/forecast' ");
         }
-        return new ForecastPresenter(lat, lng, weatherService.getFutureTemp(new Coordinate(lat, lng))).toJson();
+        List<Forecast> forecasts = weatherService.getFutureTemp(new Coordinate(lat, lng));
+        return new ForecastPresenter(request, lat, lng, forecasts).toJson();
     }
 
     private boolean isValidLatAndLng(double lat, double lng) {
