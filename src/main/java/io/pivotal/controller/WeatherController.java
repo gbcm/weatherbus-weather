@@ -29,7 +29,7 @@ public class WeatherController {
             throw new IllegalArgumentException("Bad query params to '/' ");
         }
         Forecast f = weatherService.getCurrentTemp(new Coordinate(lat, lng));
-        return new TemperaturePresenter(request, lat, lng, f.getTemp(), f.getClimacon()).toJson();
+        return new TemperaturePresenter(request, lat, lng, f.getTemp(), f.getClimacon_url(), f.getClimacon()).toJson();
     }
 
     @RequestMapping(value = "/forecast", produces = {"application/json"})

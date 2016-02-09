@@ -25,7 +25,8 @@ public class ForecastPresenter extends JsonPresenter {
             this.forecast.add(new Forecast(
                     f.getTime_epoch(),
                     f.getTemp(),
-                    WeatherIcon.getRemoteUrl(request, f.getClimacon())));
+                    WeatherIcon.getRemoteUrl(request, f.getClimacon_url()),
+                    f.getClimacon().toString()));
         }
     }
 }

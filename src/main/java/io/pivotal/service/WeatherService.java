@@ -77,11 +77,12 @@ public class WeatherService {
                 WeatherConditionsResponse wcr = iWundergroundService
                         .getConditionsResponse(Double.toString(coordinate.getLatitude()),
                                 Double.toString(coordinate.getLongitude()));
+                WeatherIcon icon = WeatherIcon.getIconFromWunderground(wcr.getIcon());
                 return new Forecast(
                         new Date().getTime(),
                         wcr.getTempF(),
-                        WeatherIcon.getIconFromWunderground(
-                                wcr.getIcon()).getClimaconFileName());
+                        icon.getClimaconFileName(),
+                        icon.toString());
             case FORECAST:
                 return getForecastCurrentTemp(coordinate);
             default:
@@ -92,11 +93,12 @@ public class WeatherService {
     public Forecast getForecastCurrentTemp(Coordinate coordinate) throws Exception {
         ForecastResponse fr = iForecastService.getForecast(Double.toString(coordinate.getLatitude()),
                 Double.toString(coordinate.getLongitude()));
+        WeatherIcon icon = WeatherIcon.getIconFromForecast(fr.getCurrently().getIcon());
         return new Forecast(
                 new Date().getTime(),
                 fr.getCurrentTemperature(),
-                WeatherIcon.getIconFromForecast(fr.getCurrently()
-                        .getIcon()).getClimaconFileName());
+                icon.getClimaconFileName(),
+                icon.toString());
     }
 
     public List<Forecast> getFutureTemp(Coordinate coordinate) throws Exception {
@@ -107,13 +109,16 @@ public class WeatherService {
                 WeatherForecastResponse wfr = iWundergroundService.getForecastResponse(
                         Double.toString(coordinate.getLatitude()),
                         Double.toString(coordinate.getLongitude()));
-                forecasts.addAll(wfr.getHourlyForecasts().stream().map(
-                        hf -> new Forecast(
-                                Long.parseLong(hf.getFctTime().getEpoch()),
-                                Double.parseDouble(hf.getTemp().getEnglish()),
-                                WeatherIcon.getIconFromWunderground(
-                                        hf.getWundergroundIcon()).getClimaconFileName()))
-                        .collect(Collectors.toList()));
+                for (WeatherForecastResponse.HourlyForecast hf : wfr.getHourlyForecasts()) {
+                    WeatherIcon icon = WeatherIcon.getIconFromWunderground(hf.getWundergroundIcon());
+                    Forecast forecast = new Forecast(
+                            Long.parseLong(hf.getFctTime().getEpoch()),
+                            Double.parseDouble(hf.getTemp().getEnglish()),
+                            icon.getClimaconFileName(),
+                            icon.toString());
+                    forecasts.add(forecast);
+                }
+
                 return forecasts;
             case FORECAST:
                 return getForecastFutureTemp(coordinate);
@@ -126,12 +131,16 @@ public class WeatherService {
         List<Forecast> forecasts = new ArrayList<>();
         ForecastResponse fr = iForecastService.getForecast(Double.toString(coordinate.getLatitude()),
                 Double.toString(coordinate.getLongitude()));
-        forecasts.addAll(fr.getHourly().getData().stream().map(
-                hf -> new Forecast(
-                        hf.getTime(),
-                        hf.getTemperature(),
-                        WeatherIcon.getIconFromForecast(hf.getIcon()).getClimaconFileName()))
-                .collect(Collectors.toList()));
+        for (ForecastResponse.Hourly.HourlyData hd : fr.getHourly().getData()) {
+            WeatherIcon icon = WeatherIcon.getIconFromForecast(hd.getIcon());
+            Forecast forecast = new Forecast(
+                    hd.getTime(),
+                    hd.getTemperature(),
+                    icon.getClimaconFileName(),
+                    icon.toString());
+            forecasts.add(forecast);
+        }
+
         return forecasts;
     }
 }

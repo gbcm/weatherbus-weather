@@ -52,7 +52,7 @@ public class WeatherControllerTest {
     @Test
     public void testGetCurrentTemp() throws Exception {
         when(weatherService.getCurrentTemp(new Coordinate(47.6098, -122.3332))).thenReturn(
-                new Forecast(0L, 36.2, "Cloud-Snow.svg")
+                new Forecast(0L, 36.2, "Cloud-Snow.svg", "SNOW")
         );
         mockMvc.perform(get("/api/temp?lat=47.6098&lng=-122.3332")).andExpect(
                 json().isEqualTo(TestUtilities.jsonFileToString("src/test/resources/output/CurrentTemp.json")));
@@ -61,8 +61,8 @@ public class WeatherControllerTest {
     @Test
     public void testGetFutureTemp() throws Exception {
         List<Forecast> values = new ArrayList<Forecast>() {{
-            add(new Forecast(1452222000L, 14.4, "Cloud-Fog.svg"));
-            add(new Forecast(1452225600L, 15.5, "Cloud-Hail.svg"));
+            add(new Forecast(1452222000L, 14.4, "Cloud-Fog.svg", "FOG"));
+            add(new Forecast(1452225600L, 15.5, "Cloud-Hail.svg", "SLEET"));
         }};
 
         when(weatherService.getFutureTemp(new Coordinate(47.6098, -122.3332))).thenReturn(values);

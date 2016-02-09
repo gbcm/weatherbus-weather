@@ -68,21 +68,23 @@ public class WeatherServiceTest {
     @Test
     public void testWundergroundGetCurrentTemp() throws Exception {
         assertEquals(51.4, subject.getCurrentTemp(coordinate).getTemp(), 0);
-        assertEquals("Cloud-Rain.svg", subject.getCurrentTemp(coordinate).getClimacon());
+        assertEquals("Cloud-Rain.svg", subject.getCurrentTemp(coordinate).getClimacon_url());
+        assertEquals("RAIN", subject.getCurrentTemp(coordinate).getClimacon());
     }
 
     @Test
     public void testForecastGetCurrentTemp() throws Exception {
         assertEquals(54.01, subject.getForecastCurrentTemp(coordinate).getTemp(), 0);
-        assertEquals("Sun.svg", subject.getForecastCurrentTemp(coordinate).getClimacon());
+        assertEquals("Sun.svg", subject.getForecastCurrentTemp(coordinate).getClimacon_url());
+        assertEquals("CLEAR_DAY", subject.getForecastCurrentTemp(coordinate).getClimacon());
     }
 
     @Test
     public void testGetFutureTemp() throws Exception {
         List<Forecast> expectedForecasts = new ArrayList<Forecast>(){{
-            add(new Forecast(1452211200L, 43.0, "Sun.svg"));
-            add(new Forecast(1452214800L, 42.0, "Cloud.svg"));
-            add(new Forecast(1452218400L, 41.0, "Cloud-Sun.svg"));
+            add(new Forecast(1452211200L, 43.0, "Sun.svg", "SUNNY"));
+            add(new Forecast(1452214800L, 42.0, "Cloud.svg", "CLOUDY"));
+            add(new Forecast(1452218400L, 41.0, "Cloud-Sun.svg", "PARTLY_CLOUDY"));
         }};
 
         assertEquals(expectedForecasts, subject.getFutureTemp(coordinate));
@@ -90,13 +92,13 @@ public class WeatherServiceTest {
 
     @Test
     public void testGetForecastFutureTemp() throws Exception {
-        List<Forecast> expectedForecases = new ArrayList<Forecast>(){{
-            add(new Forecast(1454364000L, 53.61, "Cloud-Sun.svg"));
-            add(new Forecast(1454367600L, 54.3, "Sun.svg"));
-            add(new Forecast(1454371200L, 53.72, "Moon.svg"));
+        List<Forecast> expectedForecasts = new ArrayList<Forecast>(){{
+            add(new Forecast(1454364000L, 53.61, "Cloud-Sun.svg", "PARTLY_SUNNY"));
+            add(new Forecast(1454367600L, 54.3, "Sun.svg", "CLEAR_DAY"));
+            add(new Forecast(1454371200L, 53.72, "Moon.svg", "CLEAR_NIGHT"));
         }};
 
-        assertEquals(expectedForecases, subject.getForecastFutureTemp(coordinate));
+        assertEquals(expectedForecasts, subject.getForecastFutureTemp(coordinate));
     }
 
     @Test
