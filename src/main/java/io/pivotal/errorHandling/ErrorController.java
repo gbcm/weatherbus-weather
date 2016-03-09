@@ -51,7 +51,10 @@ public class ErrorController implements org.springframework.boot.autoconfigure.w
     @RequestMapping(ErrorPathConstants.ERROR_RETROFIT_CONFIG_PATH)
     public
     @ResponseBody
-    String errorRetrofitConfig() {
+    String errorRetrofitConfig(RetrofitError e)
+    {
+        e.printStackTrace();
+        System.out.println(e.getMessage());
         return new ErrorPresenter(ErrorMessages.RETROFIT.getErrorMessage()).toJson();
     }
 

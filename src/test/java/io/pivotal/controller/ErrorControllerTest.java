@@ -10,8 +10,10 @@ import org.mockito.InjectMocks;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import retrofit.RetrofitError;
 
 import static net.javacrumbs.jsonunit.spring.JsonUnitResultMatchers.json;
+import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -57,10 +59,9 @@ public class ErrorControllerTest {
 
     @Test
     public void testRetrofitFailure() throws Exception {
-        mockMvc.perform(get(ErrorPathConstants.ERROR_RETROFIT_CONFIG_PATH))
-                .andExpect(status().isInternalServerError())
-                .andExpect(
-                        json().isEqualTo(TestUtilities.jsonFileToString("src/test/resources/output/RetrofitError.json")));
+        RetrofitError e = RetrofitError.unexpectedError("http://example.com/", new RuntimeException("nope!"));
+        String expected = TestUtilities.jsonFileToString("src/test/resources/output/RetrofitError.json");
+        assertEquals(expected, subject.errorRetrofitConfig(e));
     }
 
     @Test
