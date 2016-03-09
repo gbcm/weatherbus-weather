@@ -5,13 +5,13 @@ eureka:
   client:
     serviceUrl:
       defaultZone: ${vcap.services.eureka-service.credentials.uri:http://127.0.0.1:8761}/eureka/
-
 wunderground:
   endpoint: ${WUNDERGROUND_ENDPOINT}
   api_key: ${WUNDERGROUND_API_KEY}
 forecast:
   endpoint: ${FORECAST_ENDPOINT}
   api_key: ${FORECAST_API_KEY}
+
 
 ---
 spring:
@@ -22,14 +22,12 @@ eureka:
     nonSecurePort: 80
 
 ---
-
 spring:
     profiles: default
 server:
     port: 9090
 
 ---
-
 spring:
   profiles: test
 
@@ -38,4 +36,16 @@ wunderground:
   api_key: WUNDERGROUND_API_KEY
 forecast:
   endpoint: http://example.com/
+  api_key: FORECAST_API_KEY
+
+---
+spring:
+  profiles: goldengardens
+server:
+  port: 9090
+wunderground:
+  endpoint: http://localhost:9091/
+  api_key: WUNDERGROUND_API_KEY
+forecast:
+  endpoint: http://localhost:9092/
   api_key: FORECAST_API_KEY
